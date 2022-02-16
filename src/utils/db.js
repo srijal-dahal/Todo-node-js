@@ -3,7 +3,6 @@ const messageHandler = require("../utils/messageHandler");
 const keys = require("../config/keys");
 
 function connectToDb() {
-  console.log(keys)
   mongoose
     .connect(keys.mongoUri, {
       useNewUrlParser: true,

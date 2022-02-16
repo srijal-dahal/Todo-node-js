@@ -5,7 +5,7 @@ const asyncHandler = (handle) => {
       await handle(req, res);
       next();
     } catch (error) {
-      messageHandler(false, "Error from server", 500);
+      messageHandler(false, error.message, error.statusCode);
       next(error);
       console.log("asyncHandler error: ", error);
     }
