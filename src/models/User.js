@@ -1,5 +1,5 @@
 const { Schema } = require("mongooser");
-
+const jwt = require("jsonwebtoken");
 const UserSchema = new Schema({
   name: {
     type: String,
@@ -15,10 +15,11 @@ const UserSchema = new Schema({
   },
 });
 UserSchema.pre("save", async (next) => {
-
-    next();
+  next();
 });
 UserSchema.methods.generateToken = function () {
-    
-}
+  return jwt.sign({ id: this, _id }, "hah", {
+    expiresIn: "7d",
+  });
+};
 const User = model("User", UserSchema);
