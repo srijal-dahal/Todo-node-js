@@ -44,7 +44,6 @@ module.exports.createOne = (Model) => {
 module.exports.updateOne = (Model) => {
   return   asyncHandler(async (req, res) => {
     const doc = await Model.findByIdAndUpdate(req.params.todoid, req.body);
-    console.log(doc);
     if (!doc) {
       return res.status(404).send(messageHandler(false, "Id not found", 404));
     }
