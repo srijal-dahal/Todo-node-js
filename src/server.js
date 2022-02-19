@@ -6,6 +6,7 @@ const todoRoutes = require("./routes/todo_routes");
 const authRoutes = require("./routes/auth_routes");
 const userRoutes = require("./routes/user_routes");
 const app = express();
+const crypto = require("crypto").randomBytes(256).toString("hex");
 app.use(express.json());
 app.use(cors());
 connectToDb();

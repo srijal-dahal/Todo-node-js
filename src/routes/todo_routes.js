@@ -3,7 +3,7 @@ const todoController = require("../controller/todo_controller");
 
 const router = Router();
 
-router.post("/create", todoController.createTodo);
+router.post("/create/user=:userId/", todoController.createTodo);
 router.delete("/delete/:todoid", todoController.deleteTodo);
 router.get("/getTodos", todoController.getTodos);
 router.put("/update/:todoid", todoController.updateTodo);
