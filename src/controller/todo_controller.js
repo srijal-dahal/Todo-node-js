@@ -25,6 +25,22 @@ module.exports.createTodo = asyncHandler(async (req, res) => {
 
     res.status(201).send(messageHandler(true, "Todo Created", 201));
 });
+
+module.exports.getTodos = asyncHandler(async (req, res) => {
+    const userId = req.params.userId;
+    const doc = await User.findById(userId);
+    if (!doc) {
+        return res
+            .status(404)
+            .send(messageHandler(false, "User not found", 404));
+    }
+    const todos = await Todo.find({ user: userId }).populate({
+        path: "user",
+        select: "name email createdAt updatedAt",
+    });
+    return res.status(200).send(messageHandler(true, {todos:todos}, 200));
+});
+
 module.exports.updateTodo = asyncHandler(async (req, res) => {
     const { error } = validateTodo(req.body);
     if (error)
@@ -44,11 +60,11 @@ module.exports.updateTodo = asyncHandler(async (req, res) => {
 
 module.exports.deleteTodo = factory.deleteOne(Todo);
 
-module.exports.getTodos = factory.getAll(Todo, {
+/*module.exports.getTodos = factory.getAll(Todo, {
     path: "user",
     select: "name email createdAt updatedAt",
 });
-
+*/
 module.exports.getTodo = factory.getOne(Todo);
 
 exports.queryTodo = asyncHandler(async (req, res) => {
