@@ -6,10 +6,6 @@ const TodDoSchema = Schema(
             type: String,
             required: true,
         },
-        description: {
-            type: String,
-            required: true,
-        },
         status: {
             type: Boolean,
             default: false,
@@ -27,7 +23,7 @@ const TodDoSchema = Schema(
 const validateTodo = (todo) => {
     const schema = Joi.object({
         name: Joi.string().min(3).required(),
-        description: Joi.string().min(3).required(),
+        status: Joi.boolean().required(),
     });
     return schema.validate(todo);
 };
