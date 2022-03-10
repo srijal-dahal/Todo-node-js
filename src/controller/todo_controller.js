@@ -23,8 +23,13 @@ module.exports.createTodo = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(userId, {
         $push: { todos: todo },
     });
-
-    res.status(201).send(messageHandler(true, "Todo Created", 201));
+    const todos = await Todo.find({ userId }).populate({
+        path: "user",
+        select: "name email createdAt updatedAt",
+    });
+    res.status(201).send(
+        messageHandler(true,  todos , 201)
+    );
 });
 
 module.exports.getTodos = asyncHandler(async (req, res) => {
@@ -39,7 +44,7 @@ module.exports.getTodos = asyncHandler(async (req, res) => {
         path: "user",
         select: "name email createdAt updatedAt",
     });
-    return res.status(200).send(messageHandler(true, {todos:todos}, 200));
+    return res.status(200).send(messageHandler(true, { todos: todos }, 200));
 });
 
 module.exports.updateTodo = asyncHandler(async (req, res) => {
