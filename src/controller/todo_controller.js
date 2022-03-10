@@ -5,7 +5,6 @@ const { Todo, validateTodo } = require("../models/ToDo");
 const { User } = require("../models/User");
 //module.exports.createTodo = factory.createOne(Todo);
 module.exports.createTodo = asyncHandler(async (req, res) => {
-    console.log(req.body);
     const { error } = validateTodo(req.body);
     if (error)
         return res.status(404).send(messageHandler(false, error.message, 404));
