@@ -26,9 +26,7 @@ module.exports.createTodo = asyncHandler(async (req, res) => {
         path: "user",
         select: "name email createdAt updatedAt",
     });
-    res.status(201).send(
-        messageHandler(true,  todos , 201)
-    );
+    res.status(201).send(messageHandler(true, todos, 201));
 });
 
 module.exports.getTodos = asyncHandler(async (req, res) => {
@@ -47,29 +45,25 @@ module.exports.getTodos = asyncHandler(async (req, res) => {
 });
 
 module.exports.updateTodo = asyncHandler(async (req, res) => {
-    const { error } = validateTodo(req.body);
-    if (error)
-        return res.status(404).send(messageHandler(false, error.message), 404);
-    const userId = req.params.userId;
-    const doc = await Todo.findById(userId);
+    const todoId = req.params.todoId;
+    const doc = await Todo.findById(todoId);
     if (!doc) {
         return res
             .status(404)
-            .send(messageHandler(false, "User not found", 404));
+            .send(messageHandler(false, "Todo Not Found", 404));
     }
-    const todo = await Todo.findByIdAndUpdate(userId, {
+    const todo = await Todo.findByIdAndUpdate(todoId, {
         ...req.body,
-        user: userId,
     });
+    const todos = await Todo.find({}).populate({
+        path: "user",
+        select: "name email createdAt updatedAt",
+    });
+    return res.status(200).send(messageHandler(true, { todos: todos }, 200));
 });
 
 module.exports.deleteTodo = factory.deleteOne(Todo);
 
-/*module.exports.getTodos = factory.getAll(Todo, {
-    path: "user",
-    select: "name email createdAt updatedAt",
-});
-*/
 module.exports.getTodo = factory.getOne(Todo);
 
 exports.queryTodo = asyncHandler(async (req, res) => {
