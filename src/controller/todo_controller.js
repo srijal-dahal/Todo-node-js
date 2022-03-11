@@ -62,7 +62,21 @@ module.exports.updateTodo = asyncHandler(async (req, res) => {
     return res.status(200).send(messageHandler(true, { todos: todos }, 200));
 });
 
-module.exports.deleteTodo = factory.deleteOne(Todo);
+module.exports.deleteTodo = asyncHandler(async (req, res) => {
+    const todoId = req.params.todoId;
+    const doc = await Todo.findById(todoId);
+    if (!doc) {
+        return res
+            .status(404)
+            .send(messageHandler(false, "Todo Not Found", 404));
+    }
+    await Todo.findByIdAndDelete(todoId);
+    const todos = await Todo.find({}).populate({
+        path: "user",
+        select: "name email createdAt updatedAt",
+    });
+    return res.status(200).send(messageHandler(true, { todos: todos }, 200));
+});
 
 module.exports.getTodo = factory.getOne(Todo);
 
