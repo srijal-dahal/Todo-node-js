@@ -3,7 +3,8 @@ const messageHandler = require("../utils/messageHandler");
 const factory = require("../middleware/factoryHandler");
 const { Todo, validateTodo } = require("../models/ToDo");
 const { User } = require("../models/User");
-//module.exports.createTodo = factory.createOne(Todo);
+
+
 module.exports.createTodo = asyncHandler(async (req, res) => {
     const { error } = validateTodo(req.body);
     if (error)
@@ -78,7 +79,6 @@ module.exports.deleteTodo = asyncHandler(async (req, res) => {
     return res.status(200).send(messageHandler(true, { todos: todos }, 200));
 });
 
-module.exports.getTodo = factory.getOne(Todo);
 
 exports.queryTodo = asyncHandler(async (req, res) => {
     const { name } = req.query;
@@ -97,3 +97,19 @@ exports.queryTodo = asyncHandler(async (req, res) => {
         .status(201)
         .send(messageHandler(true, { queries: queryTodo }, 201));
 });
+
+module.exports.getCompletedTodos=asyncHandler(async(req,res)=>{
+const userId=req.params.userId;
+    const doc = await User.findById(userId);
+    if (!doc) {
+        return res
+            .status(404)
+            .send(messageHandler(false, "User not found", 404));
+    }
+    const todos = await Todo.find({ user: userId }).populate({
+        path: "user",
+        select: "name email createdAt updatedAt",
+    });
+    const completedTodos=todos.filter(todo=>todo.status===true);
+    return res.status(200).send(messageHandler(true, { todos:completedTodos }, 200));
+})
