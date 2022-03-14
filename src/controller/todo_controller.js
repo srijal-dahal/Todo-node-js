@@ -26,7 +26,7 @@ module.exports.createTodo = asyncHandler(async (req, res) => {
         path: "user",
         select: "name email createdAt updatedAt",
     });
-    res.status(201).send(messageHandler(true, todos, 201));
+    res.status(201).send(messageHandler(true, { todos }, 201));
 });
 
 module.exports.getTodos = asyncHandler(async (req, res) => {
