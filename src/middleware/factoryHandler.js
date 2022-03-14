@@ -1,6 +1,15 @@
 const messageHandler = require("../utils/messageHandler");
 const asyncHandler = require("./asyncHandler");
 
+module.exports.modelAuthHandler=(Model,param)=>{
+    return asyncHandler(async(req,res)=>{
+        const param=req.params[param];
+        const doc=await Model.findById(param);
+        if(!doc){
+            return res.status(404).send(messageHandler(false,"Id not found",404));
+        }
+    })
+}
 module.exports.deleteOne = (Model) => {
     return asyncHandler(async (req, res) => {
         const doc = await Model.findByIdAndDelete(req.params.todoid);
