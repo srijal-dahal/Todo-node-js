@@ -114,25 +114,7 @@ module.exports.deleteTodo = asyncHandler(async (req, res) => {
   return res.status(200).send(messageHandler(true, { data: todosObj }, 200));
 });
 
-exports.queryTodo = asyncHandler(async (req, res) => {
-  const { name } = req.query;
-  const filterQuery = name
-    ? {
-        name: { $regex: name, $options: "i" },
-      }
-    : {};
-  const queryTodo = await Todo.find({ ...filterQuery });
-  if (queryTodo.length === 0) {
-    return res
-      .status(201)
-      .send(messageHandler(true, { queries: queryTodo }, 201));
-  }
 
-
-  return res
-    .status(201)
-    .send(messageHandler(true, { queries: queryTodo }, 201));
-});
 
 module.exports.getCompletedTodos = asyncHandler(async (req, res) => {
   const userId = req.params.userId;
