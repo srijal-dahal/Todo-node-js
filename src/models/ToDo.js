@@ -22,7 +22,7 @@ const TodDoSchema = Schema(
 );
 const validateTodo = (todo) => {
     const schema = Joi.object({
-        name: Joi.string().min(3).required(),
+        name: Joi.string().required(),
         status: Joi.boolean().required(),
     });
     return schema.validate(todo);
