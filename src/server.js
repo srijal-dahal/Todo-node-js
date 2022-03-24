@@ -1,4 +1,5 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const connectToDb = require("./utils/db");
 require("dotenv").config({ path: `${__dirname}/config/.env` });
@@ -8,7 +9,13 @@ const userRoutes = require("./routes/user_routes");
 const app = express();
 const crypto = require("crypto").randomBytes(256).toString("hex");
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 connectToDb();
 
 app.use("/api/v1/todos", todoRoutes);
