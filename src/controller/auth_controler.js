@@ -3,7 +3,6 @@ const messageHandler = require("../utils/messageHandler");
 const { validateUser, User } = require("../models/User");
 
 module.exports.register = asyncHandler(async (req, res) => {
-  console.log("register");
   const { error } = validateUser(req.body);
   if (error)
     return res.status(401).send(messageHandler(false, error.message, 401));
@@ -49,13 +48,11 @@ module.exports.login = asyncHandler(async (req, res) => {
     return res.status(401).send(messageHandler(false, user.message, 401));
   const token = await user.generateToken(user);
   const isSecure = process.env.NODE_ENV != "development";
-
   res.cookie("Authorization", token, {
     maxAge: 1000 * 7 * 24 * 60 * 60,
     httpOnly: false,
     secure: isSecure,
   });
-  await User.findByIdAndUpdate(user._id, accesstoken);
   let userData = {
     uid: user._id,
     name: user.name,

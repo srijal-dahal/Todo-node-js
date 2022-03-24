@@ -8,7 +8,8 @@ module.exports.createTodo = asyncHandler(async (req, res) => {
   const { error } = validateTodo(req.body);
   if (error)
     return res.status(404).send(messageHandler(false, error.message, 404));
-  const userId = req.params.userId;
+  const id = req.params.userId;
+  const userId = id.trim();
   const doc = await User.findById(userId);
   if (!doc) {
     return res.status(404).send(messageHandler(false, "User not found", 404));
@@ -20,12 +21,13 @@ module.exports.createTodo = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(userId, {
     $push: { todos: todo },
   });
-  const todos = await Todo.find({ userId }).populate({
+  const todos = await Todo.find({ user: userId }).populate({
     path: "user",
     select: "name email createdAt updatedAt",
   });
-
-  const completedTodosCount = todos.filter((todo) => todo.status === true).length;
+  const completedTodosCount = todos.filter(
+    (todo) => todo.status === true
+  ).length;
   const pendingTodosCount = todos.filter(
     (todo) => todo.status === false
   ).length;
@@ -39,7 +41,8 @@ module.exports.createTodo = asyncHandler(async (req, res) => {
 });
 
 module.exports.getTodos = asyncHandler(async (req, res) => {
-  const userId = req.params.userId;
+  const id = req.params.userId;
+  const userId = id.trim();
   const doc = await User.findById(userId);
   if (!doc) {
     return res.status(404).send(messageHandler(false, "User not found", 404));
@@ -49,7 +52,9 @@ module.exports.getTodos = asyncHandler(async (req, res) => {
     select: "name email createdAt updatedAt",
   });
 
-  const completedTodosCount = todos.filter((todo) => todo.status === true).length;
+  const completedTodosCount = todos.filter(
+    (todo) => todo.status === true
+  ).length;
   const pendingTodosCount = todos.filter(
     (todo) => todo.status === false
   ).length;
@@ -63,7 +68,9 @@ module.exports.getTodos = asyncHandler(async (req, res) => {
 });
 
 module.exports.updateTodo = asyncHandler(async (req, res) => {
-  const todoId = req.params.todoId;
+  const id = req.params.todoId;
+  const userId = req.params.userId.trim();
+  const todoId = id.trim();
   const doc = await Todo.findById(todoId);
   if (!doc) {
     return res.status(404).send(messageHandler(false, "Todo Not Found", 404));
@@ -71,12 +78,14 @@ module.exports.updateTodo = asyncHandler(async (req, res) => {
   await Todo.findByIdAndUpdate(todoId, {
     ...req.body,
   });
-  const todos = await Todo.find({}).populate({
+  const todos = await Todo.find({ user: userId }).populate({
     path: "user",
     select: "name email createdAt updatedAt",
   });
 
-  const completedTodosCount = todos.filter((todo) => todo.status === true).length;
+  const completedTodosCount = todos.filter(
+    (todo) => todo.status === true
+  ).length;
   const pendingTodosCount = todos.filter(
     (todo) => todo.status === false
   ).length;
@@ -90,18 +99,24 @@ module.exports.updateTodo = asyncHandler(async (req, res) => {
 });
 
 module.exports.deleteTodo = asyncHandler(async (req, res) => {
-  const todoId = req.params.todoId;
+  const id = req.params.todoId;
+  const userId = req.params.userId.trim();
+  const todoId = id.trim();
   const doc = await Todo.findById(todoId);
   if (!doc) {
     return res.status(404).send(messageHandler(false, "Todo Not Found", 404));
   }
   await Todo.findByIdAndDelete(todoId);
-  const todos = await Todo.find({}).populate({
+  const todos = await Todo.find({ user: userId }).populate({
     path: "user",
     select: "name email createdAt updatedAt",
   });
-
-  const completedTodosCount = todos.filter((todo) => todo.status === true).length;
+  await User.findByIdAndUpdate(doc.user, {
+    $pull: { todos: todoId },
+  });
+  const completedTodosCount = todos.filter(
+    (todo) => todo.status === true
+  ).length;
   const pendingTodosCount = todos.filter(
     (todo) => todo.status === false
   ).length;
@@ -114,10 +129,9 @@ module.exports.deleteTodo = asyncHandler(async (req, res) => {
   return res.status(200).send(messageHandler(true, { data: todosObj }, 200));
 });
 
-
-
 module.exports.getCompletedTodos = asyncHandler(async (req, res) => {
-  const userId = req.params.userId;
+  const id = req.params.userId;
+  const userId = id.trim();
   const doc = await User.findById(userId);
   if (!doc) {
     return res.status(404).send(messageHandler(false, "User not found", 404));
