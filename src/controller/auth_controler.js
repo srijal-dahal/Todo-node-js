@@ -59,7 +59,6 @@ module.exports.login = asyncHandler(async (req, res) => {
   let userData = {
     uid: user._id,
     name: user.name,
-    role: user.role,
     email: user.email,
   };
   return res.status(201).send(messageHandler(true, userData, 201));
