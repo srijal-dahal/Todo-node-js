@@ -2,7 +2,7 @@ const messageHandler = require("../utils/messageHandler");
 const asyncHandler = (handle) => {
   return async (req, res, next) => {
     try {
-      await handle(req, res);
+      await handle(req, res, next);
       next();
     } catch (error) {
       messageHandler(false, error.message, error.statusCode);
