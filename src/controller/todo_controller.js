@@ -1,10 +1,9 @@
 const asyncHandler = require("../middleware/asyncHandler");
 const messageHandler = require("../utils/messageHandler");
-const factory = require("../middleware/factoryHandler");
 const { Todo, validateTodo } = require("../models/ToDo");
 const { User } = require("../models/User");
 
-module.exports.createTodo = asyncHandler(async (req, res) => {
+exports.createTodo = asyncHandler(async (req, res) => {
   const { error } = validateTodo(req.body);
   if (error)
     return res.status(404).send(messageHandler(false, error.message, 404));
@@ -40,7 +39,7 @@ module.exports.createTodo = asyncHandler(async (req, res) => {
   return res.status(200).send(messageHandler(true, { data: todosObj }, 200));
 });
 
-module.exports.getTodos = asyncHandler(async (req, res) => {
+exports.getTodos = asyncHandler(async (req, res) => {
   const id = req.params.userId;
   const userId = id.trim();
   const doc = await User.findById(userId);
@@ -67,7 +66,7 @@ module.exports.getTodos = asyncHandler(async (req, res) => {
   return res.status(200).send(messageHandler(true, { data: todosObj }, 200));
 });
 
-module.exports.updateTodo = asyncHandler(async (req, res) => {
+exports.updateTodo = asyncHandler(async (req, res) => {
   const id = req.params.todoId;
   const userId = req.params.userId.trim();
   const todoId = id.trim();
@@ -98,7 +97,7 @@ module.exports.updateTodo = asyncHandler(async (req, res) => {
   return res.status(200).send(messageHandler(true, { data: todosObj }, 200));
 });
 
-module.exports.deleteTodo = asyncHandler(async (req, res) => {
+exports.deleteTodo = asyncHandler(async (req, res) => {
   const id = req.params.todoId;
   const userId = req.params.userId.trim();
   const todoId = id.trim();
@@ -129,7 +128,7 @@ module.exports.deleteTodo = asyncHandler(async (req, res) => {
   return res.status(200).send(messageHandler(true, { data: todosObj }, 200));
 });
 
-module.exports.getCompletedTodos = asyncHandler(async (req, res) => {
+exports.getCompletedTodos = asyncHandler(async (req, res) => {
   const id = req.params.userId;
   const userId = id.trim();
   const doc = await User.findById(userId);
