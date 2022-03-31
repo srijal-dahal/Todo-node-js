@@ -20,18 +20,32 @@ module.exports.register = asyncHandler(async (req, res) => {
         .status(401)
         .send(messageHandler(false, "User already exists", 401));
   });
-  const user = await User.create({
-    name: name,
-    email: email,
-    password: password,
-  });
+  const user = await User.create(
+    {
+      name: name,
+      email: email,
+      password: password,
+    },
+    (err, user) => {
+      if (err)
+        return res
+          .status(401)
+          .send(
+            messageHandler(false, "Something went wrong! Please try again", 401)
+          );
+      if (user) {
+        return res.status(200).send(messageHandler(true, "User created", 200));
+      }
+    }
+  );
   const token = await user.generateToken(user);
 
   const isSecure = process.env.NODE_ENV != "development";
-  res.cookie("authorization", token, {
+  await res.cookie("authorization", token, {
     maxAge: 1000 * 7 * 24 * 60 * 60,
     httpOnly: false,
     secure: isSecure,
+    sameSite: "lax",
   });
   let userData = {
     uid: user._id,
@@ -58,6 +72,7 @@ module.exports.login = asyncHandler(async (req, res) => {
     maxAge: 1000 * 7 * 24 * 60 * 60,
     httpOnly: false,
     secure: isSecure,
+    sameSite: "lax",
   });
   let userData = {
     uid: user._id,

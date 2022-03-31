@@ -9,7 +9,7 @@ router.delete(
   allowIfLogin,
   todoController.deleteTodo
 );
-router.get("/getTodos/user=:userId", allowIfLogin, todoController.getTodos);
+router.get("/getTodos/user=:userId",  todoController.getTodos);
 router.put(
   "/update/:todoId/user=:userId",
   allowIfLogin,
