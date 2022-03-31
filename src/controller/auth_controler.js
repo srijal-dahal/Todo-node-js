@@ -45,7 +45,7 @@ module.exports.register = asyncHandler(async (req, res) => {
     maxAge: 1000 * 7 * 24 * 60 * 60,
     httpOnly: false,
     secure: isSecure,
-    sameSite: "lax",
+    sameSite: "none",
   });
   let userData = {
     uid: user._id,
@@ -72,7 +72,7 @@ module.exports.login = asyncHandler(async (req, res) => {
     maxAge: 1000 * 7 * 24 * 60 * 60,
     httpOnly: false,
     secure: isSecure,
-    sameSite: "lax",
+    sameSite: "none",
   });
   let userData = {
     uid: user._id,
